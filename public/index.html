@@ -1,37 +1,28 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
 <head>
-  <meta charset="UTF-8"/>
-  <title>BenefitScout Assistent</title>
-  <style>
-    body { font-family: Arial, max-width: 600px; margin: 50px auto; padding: 20px; }
-    input, button { padding: 10px; width: 100%; margin-top: 10px; }
-    .chat { margin-top: 20px; }
-    .msg { margin-bottom: 10px; }
-    .user { font-weight: bold; }
-    .bot { color: #0073e6; }
-  </style>
+  <meta charset="UTF-8">
+  <title>Benefitscout</title>
 </head>
 <body>
-  <h2>Wobei brauchst du Hilfe?</h2>
-  <input id="input" placeholder="z. B. Steuerausgleich" />
-  <button onclick="send()">Senden</button>
-  <div class="chat" id="chat"></div>
+  <h1>Frag den Finanzbot 🇦🇹</h1>
+  <input id="userInput" type="text" placeholder="Was möchtest du wissen?" />
+  <button onclick="sendMessage()">Senden</button>
+  <pre id="response"></pre>
 
   <script>
-    async function send() {
-      const input = document.getElementById('input').value;
-      const chat = document.getElementById('chat');
-      chat.innerHTML += `<div class="msg"><span class="user">Du:</span> ${input}</div>`;
+    async function sendMessage() {
+      const input = document.getElementById('userInput').value;
       const res = await fetch('/api/chat', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: input })
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ message: input })
       });
+
       const data = await res.json();
-      const reply = data.choices?.[0]?.message?.content || "Fehler bei der Antwort";
-      chat.innerHTML += `<div class="msg"><span class="bot">Bot:</span> ${reply}</div>`;
-      document.getElementById('input').value = '';
+      document.getElementById('response').innerText = data.reply || 'Fehler bei der Antwort.';
     }
   </script>
 </body>
